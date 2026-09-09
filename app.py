@@ -1,5 +1,5 @@
 import json
-import tomllib
+import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -14,8 +14,11 @@ PRACTICE = json.loads((ROOT / "data" / "practice.json").read_text(encoding="utf-
 
 
 def _load_version():
-    with (ROOT / "pyproject.toml").open("rb") as f:
-        return tomllib.load(f)["project"]["version"]
+    text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    match = re.search(r'(?m)^version\s*=\s*"([^"]+)"', text)
+    if not match:
+        raise RuntimeError("could not read project.version from pyproject.toml")
+    return match.group(1)
 
 
 VERSION = _load_version()
