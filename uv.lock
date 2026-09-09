@@ -201,7 +201,7 @@ wheels = [
 
 [[package]]
 name = "transliterillic"
-version = "0.1.13"
+version = "0.1.14"
 source = { virtual = "." }
 dependencies = [
     { name = "flask" },
