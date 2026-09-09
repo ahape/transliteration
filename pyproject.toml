@@ -1,6 +1,6 @@
 [project]
 name = "transliterillic"
-version = "0.1.1"
+version = "0.1.11"
 description = "Daily English-in-Cyrillic puzzle"
 requires-python = ">=3.9"
 dependencies = ["flask>=3.0"]
