@@ -1,5 +1,5 @@
 const STORAGE_KEY = "transliterillic";
-const LANG_ATTR = { ru: "ru", uk: "uk", uz: "uz" };
+const LANG_ATTR = { ru: "ru", uk: "uk", sr: "sr", uz: "uz", tg: "tg" };
 
 const els = {
   date: document.getElementById("date"),

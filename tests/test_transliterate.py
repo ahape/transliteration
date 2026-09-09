@@ -9,6 +9,15 @@ def test_supermarket_russian():
 def test_length_preserved():
     assert len(transliterate("kitchen", "uk")) == 7
     assert len(transliterate("window", "uz")) == 6
+    assert len(transliterate("jump", "sr")) == 4
+    assert len(transliterate("jump", "tg")) == 4
+
+
+def test_serbian_and_tajik_letters():
+    assert transliterate("jump", "sr") == "ЏУМП"
+    assert transliterate("yes", "sr") == "ЈЕС"
+    assert transliterate("jump", "tg") == "ҶУМП"
+    assert transliterate("qosh", "tg") == "ҚОСҲ"
 
 
 def test_maps_cover_a_to_z():

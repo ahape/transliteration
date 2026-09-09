@@ -54,7 +54,7 @@ Web tab: add a **Manual configuration** app with **the same** Python version. Vi
 
 If the GitHub deploy job creates the webapp, set variable `PYTHONANYWHERE_PYTHON` to match (`python310`, `python311`, `python312`, …).
 
-GitHub repo **Settings → Secrets and variables → Actions**, on the **deploy** environment (not repository secrets):
+GitHub repo **Settings → Secrets and variables → Actions** (repository secrets/variables):
 
 | Secret / variable | Required | Example |
 |---|---|---|
