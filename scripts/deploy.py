@@ -76,7 +76,7 @@ def deploy() -> None:
     domain = os.environ.get("PYTHONANYWHERE_DOMAIN") or default_domain
     project = os.environ.get("PYTHONANYWHERE_PROJECT_DIR") or f"/home/{username}/transliterillic"
     venv = os.environ.get("PYTHONANYWHERE_VENV") or f"/home/{username}/.virtualenvs/transliterillic"
-    python_version = os.environ.get("PYTHONANYWHERE_PYTHON") or "python310"
+    python_version = os.environ.get("PYTHONANYWHERE_PYTHON") or "python313"
 
     session = requests.Session()
     session.headers["Authorization"] = f"Token {token}"

@@ -43,12 +43,12 @@ First, in "Consoles", enter a Bash console and see which python versions you hav
 ls /usr/bin/python3.*
 ```
 
-Python `>` 3.12 is only on the **innit** system image (Account → System image). Older images stop at 3.10 or 3.9.
+Python `>3.10` is only on the **innit** system image (Account → System image). Older images stop around 3.10.
 
 Then, using whichever version supported:
 
 ```bash
-mkvirtualenv transliterillic --python=python3.10
+mkvirtualenv transliterillic --python=python3.XX
 pip install 'flask>=3.0'
 ```
 
@@ -73,7 +73,7 @@ GitHub repo **Settings → Secrets and variables → Actions** (repository secre
 | `PYTHONANYWHERE_USERNAME` (secret) | yes | your PA username |
 | `PYTHONANYWHERE_DOMAIN` (variable) | no | `you.pythonanywhere.com` |
 | `PYTHONANYWHERE_SITE` (variable) | no | `www.pythonanywhere.com` or `eu.pythonanywhere.com` |
-| `PYTHONANYWHERE_PYTHON` (variable) | no | `python310` if your image has no 3.12 |
+| `PYTHONANYWHERE_PYTHON` (variable) | no | `python3XX` (otherwise 3.13) |
 
 Then bump `version` in `pyproject.toml`, tag, and push:
 
