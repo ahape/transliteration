@@ -75,11 +75,13 @@ GitHub repo **Settings → Secrets and variables → Actions** (repository secre
 | `PYTHONANYWHERE_SITE` (variable) | no | `www.pythonanywhere.com` or `eu.pythonanywhere.com` |
 | `PYTHONANYWHERE_PYTHON` (variable) | no | `python3XX` (otherwise 3.13) |
 
-Then bump `version` in `pyproject.toml`, tag, and push:
+### GitHub Actions &gt; Releasing
 
 ```bash
-git tag v0.1.1
-git push origin v0.1.1
+VER="v$(uv version --bump patch | sed -E 's/.*=>[[:space:]]*//')"
+git commit -i pyproject.toml -i uv.lock -m "Release $VER"
+git tag -a $VER -m "Release $VER"
+git push origin $VER
 ```
 
 Or **Actions → CI → Run workflow**. The API uploads the runtime files and reloads the webapp; it cannot `pip install` for you, so extra Python deps still need the console.
