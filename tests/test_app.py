@@ -42,3 +42,11 @@ def test_practice_clamps():
 def test_bad_lang():
     client = app.test_client()
     assert client.get("/api/daily?lang=xx").status_code == 400
+
+
+def test_runtime_package():
+    import scripts.deploy as deploy
+
+    missing = [rel for rel in deploy.RUNTIME_FILES if not (deploy.ROOT / rel).exists()]
+    assert missing == []
+    assert deploy.version() == VERSION
