@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Transliterillic</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <div class="frame">
+      <header class="top">
+        <span class="ver">v0.1.0</span>
+        <div class="case-toggle" role="group" aria-label="Case">
+          <button type="button" id="case-upper" aria-pressed="true">Upper</button>
+          <button type="button" id="case-lower" aria-pressed="false">Lower</button>
+        </div>
+        <select id="lang" aria-label="Cyrillic flavor">
+          <option value="ru">Russian</option>
+          <option value="uk">Ukrainian</option>
+          <option value="uz">Uzbek</option>
+        </select>
+      </header>
+
+      <p id="date" class="date"></p>
+
+      <main>
+        <p id="cipher" class="cipher" lang="ru"></p>
+        <form id="guess-form">
+          <input id="guess" type="text" maxlength="12" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="English word">
+          <button type="submit" id="primary">Submit</button>
+        </form>
+        <p id="progress" class="progress"></p>
+        <p id="status" class="status" aria-live="polite"></p>
+        <p id="score" class="score" hidden></p>
+        <p id="practice-nav" class="practice-nav" hidden>
+          <button type="button" id="prev">Prev</button>
+          <button type="button" id="next">Next</button>
+        </p>
+      </main>
+    </div>
+
+    <aside id="rubric" class="rubric" aria-label="Letter rubric">
+      <h2>Rubric</h2>
+      <ul id="rubric-list"></ul>
+    </aside>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

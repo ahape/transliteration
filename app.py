@@ -1,0 +1,79 @@
+import json
+from datetime import date, datetime, timezone
+from pathlib import Path
+
+from flask import Flask, jsonify, render_template, request
+
+from transliterate import CASES, LANGS, rubric, transliterate
+
+ROOT = Path(__file__).parent
+EPOCH = date(2026, 1, 1)
+PUZZLES = json.loads((ROOT / "data" / "puzzles.json").read_text(encoding="utf-8"))
+PRACTICE = json.loads((ROOT / "data" / "practice.json").read_text(encoding="utf-8"))
+
+app = Flask(__name__)
+app.json.ensure_ascii = False
+
+
+def _opts():
+    lang = request.args.get("lang", "ru")
+    case = request.args.get("case", "upper")
+    if lang not in LANGS or case not in CASES:
+        return None
+    return lang, case
+
+
+def _pack(word, lang, case):
+    return {"cipher": transliterate(word, lang, case), "answer": word}
+
+
+@app.get("/")
+def index():
+    return render_template("index.html")
+
+
+@app.get("/api/daily")
+def daily():
+    opts = _opts()
+    if opts is None:
+        return jsonify({"error": "invalid lang or case"}), 400
+    lang, case = opts
+    today = datetime.now(timezone.utc).date()
+    index = (today - EPOCH).days
+    payload = {
+        "date": today.isoformat(),
+        "index": index,
+        "total": len(PUZZLES),
+        "rubric": rubric(lang),
+        "words": None,
+    }
+    if 0 <= index < len(PUZZLES):
+        payload["words"] = [_pack(word, lang, case) for word in PUZZLES[index]]
+    return jsonify(payload)
+
+
+@app.get("/api/practice")
+def practice():
+    opts = _opts()
+    if opts is None:
+        return jsonify({"error": "invalid lang or case"}), 400
+    lang, case = opts
+    try:
+        i = int(request.args.get("i", 0))
+    except ValueError:
+        i = 0
+    n = len(PRACTICE)
+    i = 0 if n == 0 else max(0, min(i, n - 1))
+    word = PRACTICE[i] if n else ""
+    return jsonify(
+        {
+            "index": i,
+            "total": n,
+            "rubric": rubric(lang),
+            "word": _pack(word, lang, case) if n else None,
+        }
+    )
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
