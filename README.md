@@ -17,4 +17,6 @@ To regenerate the puzzle calendar (ENABLE ∩ common English, seeded shuffle):
 python generate_puzzles.py
 ```
 
+Version is the `version` field in `pyproject.toml`.
+
 `pip install pytest` then `pytest` for the small unit tests.

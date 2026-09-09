@@ -10,14 +10,9 @@ const els = {
   progress: document.getElementById("progress"),
   status: document.getElementById("status"),
   score: document.getElementById("score"),
-  nav: document.getElementById("practice-nav"),
-  prev: document.getElementById("prev"),
-  next: document.getElementById("next"),
   rubric: document.getElementById("rubric"),
   rubricList: document.getElementById("rubric-list"),
   lang: document.getElementById("lang"),
-  caseUpper: document.getElementById("case-upper"),
-  caseLower: document.getElementById("case-lower"),
 };
 
 let mode = "daily";
@@ -28,7 +23,6 @@ let state = loadState();
 function defaultState() {
   return {
     lang: "ru",
-    case: "upper",
     dailyDate: "",
     slot: 0,
     solved: [false, false, false],
@@ -43,7 +37,9 @@ function defaultState() {
 
 function loadState() {
   try {
-    return { ...defaultState(), ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    delete parsed.case;
+    return { ...defaultState(), ...parsed };
   } catch {
     return defaultState();
   }
@@ -51,6 +47,14 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function cipherCase() {
+  try {
+    return localStorage.getItem(`${STORAGE_KEY}.case`) === "lower" ? "lower" : "upper";
+  } catch {
+    return "upper";
+  }
 }
 
 function ordinal(n) {
@@ -76,7 +80,7 @@ function shiftDate(iso, days) {
 }
 
 function qs() {
-  return `lang=${encodeURIComponent(state.lang)}&case=${encodeURIComponent(state.case)}`;
+  return `lang=${encodeURIComponent(state.lang)}&case=${encodeURIComponent(cipherCase())}`;
 }
 
 async function getJson(url) {
@@ -121,11 +125,6 @@ function setRubricOpen(open) {
   document.body.classList.toggle("rubric-open", open);
 }
 
-function setCaseButtons() {
-  els.caseUpper.setAttribute("aria-pressed", String(state.case === "upper"));
-  els.caseLower.setAttribute("aria-pressed", String(state.case === "lower"));
-}
-
 function currentWord() {
   if (mode === "practice") return practice && practice.word;
   if (!daily || !daily.words) return null;
@@ -133,9 +132,24 @@ function currentWord() {
   return daily.words[i];
 }
 
+function renderScore() {
+  const streak = document.createElement("dfn");
+  streak.title = "Consecutive days played";
+  streak.textContent = "Streak";
+  const won = document.createElement("dfn");
+  won.title = "Total perfect scores";
+  won.textContent = "Won";
+  els.score.replaceChildren(
+    streak,
+    document.createTextNode(`: ${state.currentStreak}`),
+    document.createTextNode(" \u2022 "),
+    won,
+    document.createTextNode(`: ${state.daysWon}`),
+  );
+}
+
 function render() {
   els.lang.value = state.lang;
-  setCaseButtons();
   els.cipher.lang = LANG_ATTR[state.lang] || "ru";
 
   if (daily) {
@@ -151,12 +165,10 @@ function render() {
 
   els.primary.textContent = waitingForPractice || (noDaily && !inPractice) ? "Practice" : "Submit";
   els.guess.disabled = waitingForPractice || (noDaily && !inPractice) || !word;
-  els.nav.hidden = !inPractice;
 
   if (inPractice && practice) {
     els.progress.textContent = `Practice ${practice.index + 1} / ${practice.total}`;
     els.score.hidden = false;
-    els.score.textContent = `Streak: ${state.currentStreak} · Won: ${state.daysWon}`;
   } else if (noDaily) {
     els.progress.textContent = "No daily puzzle for this date.";
     els.score.hidden = true;
@@ -164,14 +176,11 @@ function render() {
     const n = state.completed ? daily.words.length : state.slot + 1;
     els.progress.textContent = `${n} / ${daily.words.length}`;
     els.score.hidden = !state.completed;
-    if (state.completed) {
-      els.score.textContent = `Streak: ${state.currentStreak} · Won: ${state.daysWon}`;
-    }
   } else {
     els.progress.textContent = "";
     els.score.hidden = true;
   }
-
+  renderScore();
   setRubricOpen(state.completed || inPractice || noDaily);
 }
 
@@ -197,15 +206,29 @@ async function enterPractice() {
   els.guess.focus();
 }
 
-function checkGuess() {
+async function nextPractice() {
+  if (!practice) return;
+  state.practiceIndex = (practice.index + 1) % practice.total;
+  els.status.textContent = "";
+  els.guess.value = "";
+  saveState();
+  await loadPractice();
+  render();
+  els.guess.focus();
+}
+
+async function checkGuess() {
   const word = currentWord();
   if (!word) return;
   const guess = els.guess.value.trim().toLowerCase();
-  if (!guess) return;
+  if (!guess) {
+    if (mode === "practice") await nextPractice();
+    return;
+  }
   if (guess === word.answer.toLowerCase()) {
     els.guess.value = "";
-    els.status.textContent = "Correct.";
     if (mode === "daily") {
+      els.status.textContent = "Correct.";
       state.solved[state.slot] = true;
       if (state.slot < daily.words.length - 1) {
         state.slot += 1;
@@ -215,6 +238,8 @@ function checkGuess() {
       }
       saveState();
       render();
+    } else {
+      await nextPractice();
     }
     return;
   }
@@ -222,50 +247,20 @@ function checkGuess() {
   els.guess.select();
 }
 
-els.form.addEventListener("submit", (event) => {
+els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const inPractice = mode === "practice";
   const waitingForPractice = Boolean(daily && state.completed && !inPractice);
   const noDaily = Boolean(daily && !daily.words);
   if (waitingForPractice || (noDaily && !inPractice)) {
-    enterPractice();
+    await enterPractice();
     return;
   }
-  checkGuess();
-});
-
-els.prev.addEventListener("click", async () => {
-  if (!practice) return;
-  state.practiceIndex = (practice.index - 1 + practice.total) % practice.total;
-  els.status.textContent = "";
-  els.guess.value = "";
-  await loadPractice();
-  render();
-});
-
-els.next.addEventListener("click", async () => {
-  if (!practice) return;
-  state.practiceIndex = (practice.index + 1) % practice.total;
-  els.status.textContent = "";
-  els.guess.value = "";
-  await loadPractice();
-  render();
+  await checkGuess();
 });
 
 els.lang.addEventListener("change", async () => {
   state.lang = els.lang.value;
-  saveState();
-  await refresh();
-});
-
-els.caseUpper.addEventListener("click", async () => {
-  state.case = "upper";
-  saveState();
-  await refresh();
-});
-
-els.caseLower.addEventListener("click", async () => {
-  state.case = "lower";
   saveState();
   await refresh();
 });
@@ -282,7 +277,6 @@ async function refresh() {
 
 (async () => {
   els.lang.value = state.lang;
-  setCaseButtons();
   try {
     await loadDaily();
     if (state.completed) {

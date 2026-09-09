@@ -1,6 +1,8 @@
 """Build data/puzzles.json and data/practice.json from dolph/dictionary popular.txt.
 
 popular.txt is ENABLE (Scrabble, no proper nouns) intersected with common TV/movie English.
+Dailies take the first 800×3 shuffled words. Practice is everything left so it
+cannot spoil a scheduled daily.
 """
 
 from __future__ import annotations
@@ -15,7 +17,6 @@ CACHE = ROOT / ".cache" / "popular.txt"
 URL = "https://raw.githubusercontent.com/dolph/dictionary/master/popular.txt"
 SEED = 20260101
 DAYS = 800
-PRACTICE_N = 300
 MIN_LEN = 4
 MAX_LEN = 10
 
@@ -36,14 +37,14 @@ def load_words() -> list[str]:
 
 def main() -> None:
     words = load_words()
-    need = DAYS * 3 + PRACTICE_N
+    need = DAYS * 3
     if len(words) < need:
         raise SystemExit(f"only {len(words)} eligible words, need {need}")
     rng = random.Random(SEED)
     rng.shuffle(words)
-    daily = words[: DAYS * 3]
-    practice = words[DAYS * 3 : DAYS * 3 + PRACTICE_N]
-    puzzles = [daily[i : i + 3] for i in range(0, DAYS * 3, 3)]
+    daily = words[:need]
+    practice = words[need:]
+    puzzles = [daily[i : i + 3] for i in range(0, need, 3)]
 
     data = ROOT / "data"
     data.mkdir(exist_ok=True)

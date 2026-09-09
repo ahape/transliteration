@@ -1,4 +1,5 @@
 import json
+import tomllib
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -10,6 +11,14 @@ ROOT = Path(__file__).parent
 EPOCH = date(2026, 1, 1)
 PUZZLES = json.loads((ROOT / "data" / "puzzles.json").read_text(encoding="utf-8"))
 PRACTICE = json.loads((ROOT / "data" / "practice.json").read_text(encoding="utf-8"))
+
+
+def _load_version():
+    with (ROOT / "pyproject.toml").open("rb") as f:
+        return tomllib.load(f)["project"]["version"]
+
+
+VERSION = _load_version()
 
 app = Flask(__name__)
 app.json.ensure_ascii = False
@@ -29,7 +38,7 @@ def _pack(word, lang, case):
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", version=VERSION)
 
 
 @app.get("/api/daily")

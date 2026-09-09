@@ -29,30 +29,8 @@ body.rubric-open {
   font-variant-numeric: tabular-nums;
 }
 
-.case-toggle {
-  display: inline-flex;
-  gap: 0;
-}
-
-.case-toggle button,
-.top select,
-.practice-nav button,
-form button {
-  width: auto;
-  margin: 0;
-}
-
-.case-toggle button {
-  padding-inline: 0.9rem;
-}
-
-.case-toggle button[aria-pressed="false"] {
-  background: transparent;
-  color: var(--pico-color);
-  border: var(--pico-border-width) solid var(--pico-muted-border-color);
-}
-
 .top select {
+  width: auto;
   margin: 0;
   padding-block: 0.4rem;
 }
@@ -61,7 +39,13 @@ form button {
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin: 2rem 0 1rem;
+  margin: 2rem 0 0.35rem;
+}
+
+.tagline {
+  text-align: center;
+  color: var(--pico-muted-color);
+  margin: 0 0 1rem;
 }
 
 .cipher {
@@ -73,15 +57,9 @@ form button {
   word-break: break-word;
 }
 
-form {
-  display: flex;
-  gap: 0.5rem;
-  align-items: stretch;
-}
-
-form input {
-  flex: 1;
-  margin: 0;
+form input,
+form button {
+  width: 100%;
 }
 
 .progress,
@@ -93,13 +71,6 @@ form input {
 
 .score {
   color: var(--pico-muted-color);
-}
-
-.practice-nav {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
 }
 
 .rubric {

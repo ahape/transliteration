@@ -1,12 +1,16 @@
 from datetime import datetime, timezone
 
-from app import EPOCH, PUZZLES, app
+from app import EPOCH, PUZZLES, VERSION, app
 
 
 def test_index():
     html = app.test_client().get("/").get_data(as_text=True)
     assert "Transliterillic" in html
     assert "pico.min.css" in html
+    assert f"v{VERSION}" in html
+    assert "Guess the English word behind the Cyrillic." in html
+    assert "case-upper" not in html
+    assert "practice-nav" not in html
 
 
 def test_daily_ok():

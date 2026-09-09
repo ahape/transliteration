@@ -10,11 +10,7 @@
   <body>
     <div class="frame">
       <header class="top">
-        <span class="ver">v0.1.0</span>
-        <div class="case-toggle" role="group" aria-label="Case">
-          <button type="button" id="case-upper" aria-pressed="true">Upper</button>
-          <button type="button" id="case-lower" aria-pressed="false">Lower</button>
-        </div>
+        <span class="ver">v{{ version }}</span>
         <select id="lang" aria-label="Cyrillic flavor">
           <option value="ru">Russian</option>
           <option value="uk">Ukrainian</option>
@@ -23,6 +19,7 @@
       </header>
 
       <p id="date" class="date"></p>
+      <p class="tagline">Guess the English word behind the Cyrillic.</p>
 
       <main>
         <p id="cipher" class="cipher" lang="ru"></p>
@@ -33,10 +30,6 @@
         <p id="progress" class="progress"></p>
         <p id="status" class="status" aria-live="polite"></p>
         <p id="score" class="score" hidden></p>
-        <p id="practice-nav" class="practice-nav" hidden>
-          <button type="button" id="prev">Prev</button>
-          <button type="button" id="next">Next</button>
-        </p>
       </main>
     </div>
 

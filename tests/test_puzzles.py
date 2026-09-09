@@ -16,7 +16,7 @@ def test_calendar_shape():
     assert all(WORD.match(word) for word in daily)
     assert all(WORD.match(word) for word in practice)
     assert len(daily) == len(set(daily))
-    assert len(practice) == 300
+    assert len(practice) > 10000
     assert set(daily).isdisjoint(practice)
 
 
