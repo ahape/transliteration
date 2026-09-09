@@ -33,24 +33,35 @@ python generate_puzzles.py
 
 Version is the `version` field in `pyproject.toml`.
 
-## Deploy (GitHub Actions → PythonAnywhere)
+## Deploying
 
-CI runs tests on every push. A versioned zip is attached as a workflow artifact. Deploy happens on a `v*` tag or a manual **Run workflow**.
+### PythonAnywhere
 
-One-time on PythonAnywhere (Bash console). Python 3.12 is only on the **innit** system image (Account → System image). Older images stop at 3.10 or 3.9. See what you have:
+First, in "Consoles", enter a Bash console and see which python versions you have access to:
 
 ```bash
 ls /usr/bin/python3.*
 ```
 
-Then, using a version that actually listed:
+Python `>` 3.12 is only on the **innit** system image (Account → System image). Older images stop at 3.10 or 3.9.
+
+Then, using whichever version supported:
 
 ```bash
 mkvirtualenv transliterillic --python=python3.10
 pip install 'flask>=3.0'
 ```
 
-Web tab: add a **Manual configuration** app with **the same** Python version. Virtualenv: `/home/<you>/.virtualenvs/transliterillic`. Source: `/home/<you>/transliterillic`.
+Web tab: add a **Manual configuration** app with **the same** Python version.
+
+* Virtualenv = `/home/<you>/.virtualenvs/transliterillic`
+* Source = `/home/<you>/transliterillic`.
+
+When finished, reload the website.
+
+### GitHub Actions
+
+CI runs tests on every push. A versioned zip is attached as a workflow artifact. Deploy happens on a `v*` tag or a manual **Run workflow**.
 
 If the GitHub deploy job creates the webapp, set variable `PYTHONANYWHERE_PYTHON` to match (`python310`, `python311`, `python312`, …).
 
