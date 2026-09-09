@@ -39,6 +39,6 @@
 *.otf binary
 
 # Make Git show noisy files as binary in diffs.
-data/practice.json binary
+data/*.json binary
 *.min.js binary
 *.min.css binary
