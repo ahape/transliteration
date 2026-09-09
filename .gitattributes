@@ -1,0 +1,43 @@
+# Normalize all text files to LF in the repository.
+* text=auto eol=lf
+
+# Windows scripts should use CRLF when checked out on Windows.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Keep common text/code files explicitly as text.
+*.py text
+*.js text
+*.mjs text
+*.cjs text
+*.ts text
+*.tsx text
+*.jsx text
+*.json text
+*.html text
+*.css text
+*.scss text
+*.md text
+*.yml text
+*.yaml text
+*.toml text
+*.ini text
+*.sh text
+*.sql text
+
+# Treat binaries as binary; do not attempt line-ending conversion or diffs.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+
+# Optional: make Git show generated/minified files as binary in diffs.
+*.min.js binary
+*.min.css binary
