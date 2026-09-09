@@ -1,6 +1,6 @@
 # Transliterillic
 
-A daily three-word puzzle: an English Scrabble word, shown in Cyrillic. Same UTC date, same three words for everyone.
+A daily three-word puzzle: an English Scrabble word, shown in Cyrillic. New word every day.
 
 ```bash
 python -m venv .venv
@@ -14,12 +14,20 @@ flask --app app run
 
 Open http://127.0.0.1:5000
 
-To regenerate the puzzle calendar (ENABLE ∩ common English, seeded shuffle):
+<details>
+
+<summary>
+Regenerating the puzzle calendar
+</summary>
+
+ENABLE ∩ common English, seeded shuffle:
 
 ```bash
 python generate_puzzles.py
 ```
 
-Version is the `version` field in `pyproject.toml`.
+</details>
 
-`pip install pytest` then `pytest` for the small unit tests.
+
+`pip install pytest` then `pytest` to run the test suite.
+
