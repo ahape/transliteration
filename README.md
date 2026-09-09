@@ -1,5 +1,24 @@
 # Transliterillic
 
+## Background
+
+**100% vibe-coded using Grok 4.6 (high)**. Most of the work done is based off of a single wireframe and prompt. UI adjustments and CI/CD cruft added in subsequent prompts.
+
+Original [wireframe](https://imgur.com/a/eSq1aQo)
+
+<details>
+<summary>Original prompt</summary>
+
+> Create a web app based on the `wireframe.jpg` photo. Use a minimal Flask backend and choose the simplest front-end technology for you to maintain. Use IndexedDB or `localStorage` for persistence if needed.
+
+> The app should include a daily puzzle system similar to Wordle: each user can complete one scored solve per day, while still being able to browse and practice previous or other words without affecting their score.
+
+> Each daily puzzle should contain three words. All words must come from a valid Scrabble word list, so they should be relatively short and must not include proper nouns. Pre-generate and store a fixed sequence of daily word sets for at least the next 500 days, ensuring that every user worldwide receives the same three words on a given date.
+
+> The words to solve should be English words transliterated into Cyrillic, rather than words native to the particular Cyrillic-language variant used in the app.
+
+</details>
+
 A daily three-word puzzle: an English Scrabble word, shown in Cyrillic. New word every day.
 
 ```bash
@@ -15,10 +34,7 @@ flask --app app run
 Open http://127.0.0.1:5000
 
 <details>
-
-<summary>
-Regenerating the puzzle calendar
-</summary>
+<summary>Regenerating the puzzle calendar</summary>
 
 ENABLE ∩ common English, seeded shuffle:
 
