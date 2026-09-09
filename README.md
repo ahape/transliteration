@@ -9,6 +9,9 @@ pip install -r requirements.txt
 flask --app app run
 ```
 
+> [!NOTE]
+> if the default port (`5000`) is occupied, just add `--port 5001` to the end of the `flask` command.
+
 Open http://127.0.0.1:5000
 
 To regenerate the puzzle calendar (ENABLE ∩ common English, seeded shuffle):
