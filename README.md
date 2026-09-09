@@ -10,7 +10,7 @@ flask --app app run
 ```
 
 > [!NOTE]
-> if the default port (`5000`) is occupied, just add `--port 5001` to the end of the `flask` command.
+> if the default port (`5000`) is occupied, just append `--port 5001` to the end of the `flask` command above.
 
 Open http://127.0.0.1:5000
 
