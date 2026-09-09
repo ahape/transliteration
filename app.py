@@ -1,5 +1,5 @@
 import json
-import re
+import tomllib
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -14,11 +14,8 @@ PRACTICE = json.loads((ROOT / "data" / "practice.json").read_text(encoding="utf-
 
 
 def _load_version():
-    text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-    match = re.search(r'(?m)^version\s*=\s*"([^"]+)"', text)
-    if not match:
-        raise RuntimeError("could not read project.version from pyproject.toml")
-    return match.group(1)
+    with (ROOT / "pyproject.toml").open("rb") as f:
+        return tomllib.load(f)["project"]["version"]
 
 
 VERSION = _load_version()
@@ -70,12 +67,12 @@ def practice():
     if opts is None:
         return jsonify({"error": "invalid lang or case"}), 400
     lang, case = opts
+    n = len(PRACTICE)
     try:
         i = int(request.args.get("i", 0))
     except ValueError:
         i = 0
-    n = len(PRACTICE)
-    i = 0 if n == 0 else max(0, min(i, n - 1))
+    i = max(0, min(i, n - 1)) if n else 0
     word = PRACTICE[i] if n else ""
     return jsonify(
         {

@@ -2,5 +2,5 @@
 name = "transliterillic"
 version = "0.1.15"
 description = "Daily English-in-Cyrillic puzzle"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = ["flask>=3.0"]

@@ -1,5 +1,4 @@
 const STORAGE_KEY = "transliterillic";
-const LANG_ATTR = { ru: "ru", uk: "uk", sr: "sr", uz: "uz", tg: "tg" };
 
 const els = {
   date: document.getElementById("date"),
@@ -37,9 +36,7 @@ function defaultState() {
 
 function loadState() {
   try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    delete parsed.case;
-    return { ...defaultState(), ...parsed };
+    return { ...defaultState(), ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
   } catch {
     return defaultState();
   }
@@ -47,14 +44,6 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-function cipherCase() {
-  try {
-    return localStorage.getItem(`${STORAGE_KEY}.case`) === "lower" ? "lower" : "upper";
-  } catch {
-    return "upper";
-  }
 }
 
 function ordinal(n) {
@@ -80,7 +69,7 @@ function shiftDate(iso, days) {
 }
 
 function qs() {
-  return `lang=${encodeURIComponent(state.lang)}&case=${encodeURIComponent(cipherCase())}`;
+  return `lang=${encodeURIComponent(state.lang)}`;
 }
 
 async function getJson(url) {
@@ -111,13 +100,7 @@ function markWin(today) {
 }
 
 function renderRubric(rows) {
-  els.rubricList.replaceChildren(
-    ...rows.map((row) => {
-      const li = document.createElement("li");
-      li.textContent = `${row.cyr} = ${row.lat}`;
-      return li;
-    }),
-  );
+  els.rubricList.innerHTML = rows.map((r) => `<li>${r.cyr} = ${r.lat}</li>`).join("");
 }
 
 function setRubricOpen(open) {
@@ -133,24 +116,19 @@ function currentWord() {
 }
 
 function renderScore() {
-  const streak = document.createElement("dfn");
-  streak.title = "Consecutive days played";
-  streak.textContent = "Streak";
-  const won = document.createElement("dfn");
-  won.title = "Total perfect scores";
-  won.textContent = "Won";
-  els.score.replaceChildren(
-    streak,
-    document.createTextNode(`: ${state.currentStreak}`),
-    document.createTextNode(" \u2022 "),
-    won,
-    document.createTextNode(`: ${state.daysWon}`),
-  );
+  els.score.innerHTML = `<dfn title="Consecutive days played">Streak</dfn>: ${state.currentStreak} &bull; <dfn title="Total perfect scores">Won</dfn>: ${state.daysWon}`;
+}
+
+function isPracticePrompt() {
+  const inPractice = mode === "practice";
+  const waitingForPractice = Boolean(daily && state.completed && !inPractice);
+  const noDaily = Boolean(daily && !daily.words);
+  return waitingForPractice || (noDaily && !inPractice);
 }
 
 function render() {
   els.lang.value = state.lang;
-  els.cipher.lang = LANG_ATTR[state.lang] || "ru";
+  els.cipher.lang = state.lang || "ru";
 
   if (daily) {
     els.date.textContent = formatUtcDate(daily.date);
@@ -160,11 +138,11 @@ function render() {
   els.cipher.textContent = word ? word.cipher : "";
 
   const inPractice = mode === "practice";
-  const waitingForPractice = Boolean(daily && state.completed && !inPractice);
+  const promptPractice = isPracticePrompt();
   const noDaily = Boolean(daily && !daily.words);
 
-  els.primary.textContent = waitingForPractice || (noDaily && !inPractice) ? "Practice" : "Submit";
-  els.guess.disabled = waitingForPractice || (noDaily && !inPractice) || !word;
+  els.primary.textContent = promptPractice ? "Practice" : "Submit";
+  els.guess.disabled = promptPractice || !word;
 
   if (inPractice && practice) {
     els.progress.textContent = `Practice ${practice.index + 1} / ${practice.total}`;
@@ -197,24 +175,24 @@ async function loadPractice() {
   saveState();
 }
 
-async function enterPractice() {
-  mode = "practice";
-  els.status.textContent = "";
-  els.guess.value = "";
-  await loadPractice();
-  render();
-  els.guess.focus();
-}
-
-async function nextPractice() {
-  if (!practice) return;
-  state.practiceIndex = (practice.index + 1) % practice.total;
+async function setPracticeWord(index) {
+  state.practiceIndex = index;
   els.status.textContent = "";
   els.guess.value = "";
   saveState();
   await loadPractice();
   render();
   els.guess.focus();
+}
+
+async function enterPractice() {
+  mode = "practice";
+  await setPracticeWord(state.practiceIndex);
+}
+
+async function nextPractice() {
+  if (!practice) return;
+  await setPracticeWord((practice.index + 1) % practice.total);
 }
 
 async function checkGuess() {
@@ -249,10 +227,7 @@ async function checkGuess() {
 
 els.form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const inPractice = mode === "practice";
-  const waitingForPractice = Boolean(daily && state.completed && !inPractice);
-  const noDaily = Boolean(daily && !daily.words);
-  if (waitingForPractice || (noDaily && !inPractice)) {
+  if (isPracticePrompt()) {
     await enterPractice();
     return;
   }
@@ -275,15 +250,4 @@ async function refresh() {
   }
 }
 
-(async () => {
-  els.lang.value = state.lang;
-  try {
-    await loadDaily();
-    if (state.completed) {
-      els.status.textContent = "";
-    }
-    render();
-  } catch {
-    els.status.textContent = "Could not load puzzle.";
-  }
-})();
+refresh();
