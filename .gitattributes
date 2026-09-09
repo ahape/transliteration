@@ -38,6 +38,7 @@
 *.ttf binary
 *.otf binary
 
-# Optional: make Git show generated/minified files as binary in diffs.
+# Make Git show noisy files as binary in diffs.
+data/practice.json binary
 *.min.js binary
 *.min.css binary
