@@ -1,21 +1,24 @@
-"""1:1 Latin→Cyrillic maps. Cipher length always equals English length."""
+"""1:1 Latin→script engine. Cipher length always equals English length."""
+
+from plugins import ALL
 
 CASES = ("upper", "lower")
 LATIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-CYRILLIC_STRINGS = {
-    "ru": "АБЦДЭФГХИЖКЛМНОПКРСТУВВХЙЗ",
-    "uk": "АБЦДЕФҐГІЖКЛМНОПКРСТУВВХИЗ",
-    "uz": "АБЦДЕФГҲИЖКЛМНОПҚРСТУВЎХЙЗ",
-    "sr": "АБЦДЕФГХИЏКЛМНОПКРСТУВВХЈЗ",
-    "tg": "АБЦДЕФГҲИҶКЛМНОПҚРСТУВВХЙЗ",
-}
+FLAVORS = {}
+MAPS = {}
+for plugin in ALL:
+    for code, (_, glyphs) in plugin.flavors.items():
+        if len(glyphs) != len(LATIN):
+            raise ValueError(f"{plugin.id}:{code} has {len(glyphs)} glyphs, need {len(LATIN)}")
+        FLAVORS[code] = plugin
+        MAPS[code] = dict(zip(LATIN, glyphs))
 
-MAPS = {lang: dict(zip(LATIN, chars)) for lang, chars in CYRILLIC_STRINGS.items()}
 LANGS = tuple(MAPS)
+DEFAULT_LANG = LANGS[0]
 
 
-def transliterate(word, lang="ru", case="upper"):
+def transliterate(word, lang=DEFAULT_LANG, case="upper"):
     if lang not in MAPS:
         raise ValueError(f"unknown lang: {lang}")
     if case not in CASES:
@@ -28,8 +31,7 @@ def transliterate(word, lang="ru", case="upper"):
     return cipher.lower() if case == "lower" else cipher
 
 
-def rubric(lang="ru"):
-    """Latin A–Z rows: {cyr, lat}. Duplicate glyphs are allowed."""
-    if lang not in CYRILLIC_STRINGS:
+def rubric(lang=DEFAULT_LANG):
+    if lang not in MAPS:
         raise ValueError(f"unknown lang: {lang}")
-    return [{"cyr": c, "lat": l} for l, c in zip(LATIN, CYRILLIC_STRINGS[lang])]
+    return [{"glyph": MAPS[lang][l], "lat": l} for l in LATIN]

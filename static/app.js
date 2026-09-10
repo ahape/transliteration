@@ -9,9 +9,11 @@ const els = {
   progress: document.getElementById("progress"),
   status: document.getElementById("status"),
   score: document.getElementById("score"),
+  revealed: document.getElementById("revealed"),
   rubric: document.getElementById("rubric"),
   rubricList: document.getElementById("rubric-list"),
   lang: document.getElementById("lang"),
+  tagline: document.getElementById("tagline"),
 };
 
 let mode = "daily";
@@ -21,7 +23,7 @@ let state = loadState();
 
 function defaultState() {
   return {
-    lang: "ru",
+    lang: els.lang.value || "ru",
     dailyDate: "",
     slot: 0,
     solved: [false, false, false],
@@ -107,7 +109,7 @@ function markWin(today) {
 }
 
 function renderRubric(rows) {
-  els.rubricList.innerHTML = rows.map((r) => `<li>${r.cyr} = ${r.lat}</li>`).join("");
+  els.rubricList.innerHTML = rows.map((r) => `<li>${r.glyph} = ${r.lat}</li>`).join("");
 }
 
 function setRubricOpen(open) {
@@ -126,6 +128,23 @@ function renderScore() {
   els.score.innerHTML = `<dfn title="Consecutive days played">Streak</dfn>: ${state.currentStreak} &bull; <dfn title="Total perfect scores">Won</dfn>: ${state.daysWon}`;
 }
 
+function renderRevealed() {
+  if (!daily || !daily.words) {
+    els.revealed.hidden = true;
+    els.revealed.innerHTML = "";
+    return;
+  }
+  const n = state.completed ? daily.words.length : state.slot;
+  const rows = daily.words.slice(0, n);
+  els.revealed.hidden = rows.length === 0;
+  els.revealed.innerHTML = rows
+    .map((word, i) => {
+      const line = `${word.cipher} -> ${word.answer.toUpperCase()}`;
+      return `<li>${state.solved[i] ? line : `${line} (wrong)`}</li>`;
+    })
+    .join("");
+}
+
 function isPracticePrompt() {
   const inPractice = mode === "practice";
   const waitingForPractice = Boolean(daily && state.completed && !inPractice);
@@ -135,7 +154,10 @@ function isPracticePrompt() {
 
 function render() {
   els.lang.value = state.lang;
-  els.cipher.lang = state.lang || "ru";
+  els.cipher.lang = state.lang || els.lang.value;
+
+  const src = mode === "practice" ? practice : daily;
+  if (src && src.tagline) els.tagline.textContent = src.tagline;
 
   if (daily) {
     els.date.textContent = formatUtcDate(daily.date);
@@ -166,6 +188,7 @@ function render() {
     els.score.hidden = true;
   }
   renderScore();
+  renderRevealed();
   setRubricOpen(state.completed || inPractice || noDaily);
 }
 
@@ -202,6 +225,20 @@ async function nextPractice() {
   await setPracticeWord((practice.index + 1) % practice.total);
 }
 
+function advanceDaily(correct) {
+  els.guess.value = "";
+  els.status.textContent = correct ? "Correct." : "";
+  if (correct) state.solved[state.slot] = true;
+  if (state.slot < daily.words.length - 1) {
+    state.slot += 1;
+  } else {
+    state.completed = true;
+    if (state.solved.every(Boolean)) markWin(daily.date);
+  }
+  saveState();
+  render();
+}
+
 async function checkGuess() {
   const word = currentWord();
   if (!word) return;
@@ -210,22 +247,13 @@ async function checkGuess() {
     if (mode === "practice") await nextPractice();
     return;
   }
-  if (guess === word.answer.toLowerCase()) {
-    els.guess.value = "";
-    if (mode === "daily") {
-      els.status.textContent = "Correct.";
-      state.solved[state.slot] = true;
-      if (state.slot < daily.words.length - 1) {
-        state.slot += 1;
-      } else {
-        state.completed = true;
-        markWin(daily.date);
-      }
-      saveState();
-      render();
-    } else {
-      await nextPractice();
-    }
+  const ok = guess === word.answer.toLowerCase();
+  if (mode === "daily") {
+    advanceDaily(ok);
+    return;
+  }
+  if (ok) {
+    await nextPractice();
     return;
   }
   els.status.textContent = "Not quite.";

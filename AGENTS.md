@@ -6,13 +6,17 @@ Prefer the smallest change that works. Do not add an abstraction, framework, or 
 
 ## Project
 
-Daily 3-word puzzle: English Scrabble words shown as 1:1 Latin-to-Cyrillic ciphers. Flask serves HTML and two JSON endpoints. The browser is vanilla JS + Pico CSS + localStorage. No frontend build.
+Daily 3-word puzzle: English Scrabble words shown as 1:1 Latin-to-script ciphers. Flask serves HTML and two JSON endpoints. The browser is vanilla JS + Pico CSS + localStorage. No frontend build.
 
     app.py              Flask; /api/daily and /api/practice
-    transliterate.py    1:1 maps; cipher length equals English length
+    transliterate.py    1:1 engine; cipher length equals English length
+    plugins/            alphabet plugins (maps, labels, tagline)
     generate_puzzles.py seeded calendar; do not rerun unless asked
     static/app.js       game and streak state
     data/*.json         pregenerated words
+
+A plugin is `id`, `label`, `tagline`, and `flavors` `{code: (name, 26-glyphs)}`.
+Register it in `plugins.ALL` and `scripts/deploy.RUNTIME_FILES`. Flavor codes are global.
 
 Browser-local date from EPOCH 2026-01-01 indexes puzzles.json. Practice words must not overlap scheduled dailies. Version is the `version` field in pyproject.toml.
 
@@ -23,6 +27,6 @@ Browser-local date from EPOCH 2026-01-01 indexes puzzles.json. Practice words mu
 
 ## Style
 
-- ASCII in comments and docs. Cyrillic belongs in maps and UI.
+- ASCII in comments and docs. Non-Latin glyphs belong in plugin maps and UI.
 - Short functions. No types unless they prevent a real bug.
 - Server transliterates. Client guesses and stores streaks.

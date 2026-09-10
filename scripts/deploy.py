@@ -19,6 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_FILES = (
     "app.py",
     "transliterate.py",
+    "plugins/__init__.py",
+    "plugins/cyrillic.py",
+    "plugins/greek.py",
     "wsgi.py",
     "pyproject.toml",
     "requirements.txt",
