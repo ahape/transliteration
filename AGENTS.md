@@ -14,7 +14,7 @@ Daily 3-word puzzle: English Scrabble words shown as 1:1 Latin-to-Cyrillic ciphe
     static/app.js       game and streak state
     data/*.json         pregenerated words
 
-UTC date from EPOCH 2026-01-01 indexes puzzles.json. Practice words must not overlap scheduled dailies. Version is the `version` field in pyproject.toml.
+Browser-local date from EPOCH 2026-01-01 indexes puzzles.json. Practice words must not overlap scheduled dailies. Version is the `version` field in pyproject.toml.
 
 ## Commands
 

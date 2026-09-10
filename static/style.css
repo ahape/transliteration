@@ -24,9 +24,18 @@ body.rubric-open {
   flex-wrap: wrap;
 }
 
-.ver {
+.ver,
+.ver:visited,
+.ver:hover,
+.ver:focus {
   color: var(--pico-muted-color);
   font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+
+.ver:hover,
+.ver:focus {
+  text-decoration: underline;
 }
 
 .top select {

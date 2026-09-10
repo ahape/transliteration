@@ -68,6 +68,13 @@ function shiftDate(iso, days) {
   return dt.toISOString().slice(0, 10);
 }
 
+function localIsoDate() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
 function qs() {
   return `lang=${encodeURIComponent(state.lang)}`;
 }
@@ -163,7 +170,7 @@ function render() {
 }
 
 async function loadDaily() {
-  daily = await getJson(`/api/daily?${qs()}`);
+  daily = await getJson(`/api/daily?${qs()}&date=${localIsoDate()}`);
   rollDay(daily.date);
   if (daily.rubric) renderRubric(daily.rubric);
   saveState();
@@ -250,4 +257,24 @@ async function refresh() {
   }
 }
 
+function rollIfNewDay() {
+  if (localIsoDate() === state.dailyDate) return;
+  mode = "daily";
+  refresh();
+}
+
+function armMidnight() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  setTimeout(() => {
+    rollIfNewDay();
+    armMidnight();
+  }, Math.max(50, next - now));
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") rollIfNewDay();
+});
+
 refresh();
+armMidnight();

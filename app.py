@@ -1,6 +1,6 @@
 import json
 import tomllib
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request
@@ -36,6 +36,22 @@ def _pack(word, lang, case):
     return {"cipher": transliterate(word, lang, case), "answer": word}
 
 
+def _today():
+    now = datetime.now(timezone.utc)
+    raw = request.args.get("date")
+    if raw:
+        try:
+            wanted = date.fromisoformat(raw)
+        except ValueError:
+            wanted = None
+        else:
+            lo = (now - timedelta(hours=12)).date()
+            hi = (now + timedelta(hours=14)).date()
+            if lo <= wanted <= hi:
+                return wanted
+    return now.date()
+
+
 @app.get("/")
 def index():
     return render_template("index.html", version=VERSION)
@@ -47,7 +63,7 @@ def daily():
     if opts is None:
         return jsonify({"error": "invalid lang or case"}), 400
     lang, case = opts
-    today = datetime.now(timezone.utc).date()
+    today = _today()
     index = (today - EPOCH).days
     payload = {
         "date": today.isoformat(),
