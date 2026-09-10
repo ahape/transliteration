@@ -84,12 +84,13 @@ form button {
 }
 
 .revealed {
-  list-style: none;
   padding: 0;
 }
 
 .revealed li {
   margin: 0.2rem 0;
+  list-style: none;
+  color: var(--pico-muted-color);
 }
 
 .rubric {
