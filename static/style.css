@@ -73,13 +73,23 @@ form button {
 
 .progress,
 .status,
-.score {
+.score,
+.revealed {
   text-align: center;
   margin: 0.75rem 0 0;
 }
 
 .score {
   color: var(--pico-muted-color);
+}
+
+.revealed {
+  list-style: none;
+  padding: 0;
+}
+
+.revealed li {
+  margin: 0.2rem 0;
 }
 
 .rubric {

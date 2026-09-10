@@ -12,6 +12,7 @@ def test_index():
     assert "Guess the English word behind the Cyrillic." in html
     assert 'value="el"' in html
     assert "Greek" in html
+    assert 'id="revealed"' in html
     assert "case-upper" not in html
     assert "practice-nav" not in html
 
