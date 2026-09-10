@@ -10,6 +10,8 @@ def test_index():
     assert f'href="https://github.com/ahape/transliterillic/releases/tag/v{VERSION}"' in html
     assert f"v{VERSION}" in html
     assert "Guess the English word behind the Cyrillic." in html
+    assert 'value="el"' in html
+    assert "Greek" in html
     assert "case-upper" not in html
     assert "practice-nav" not in html
 
@@ -33,6 +35,8 @@ def test_daily_ok():
     today = datetime.now(timezone.utc).date()
     _assert_daily(data, today)
     assert data["rubric"][0]["lat"] == "A"
+    assert data["rubric"][0]["glyph"]
+    assert "Cyrillic" in data["tagline"]
 
 
 def test_daily_uses_client_date():
@@ -60,6 +64,17 @@ def test_practice_clamps():
     assert res.status_code == 200
     assert data["index"] == data["total"] - 1
     assert data["word"]["cipher"] == data["word"]["cipher"].lower()
+    assert "Cyrillic" in data["tagline"]
+
+
+def test_daily_greek():
+    client = app.test_client()
+    res = client.get("/api/daily?lang=el&case=upper")
+    assert res.status_code == 200
+    data = res.get_json()
+    assert "Greek" in data["tagline"]
+    if data["words"]:
+        assert data["words"][0]["cipher"]
 
 
 def test_bad_lang():

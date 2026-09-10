@@ -11,17 +11,19 @@
     <div class="frame">
       <header class="top">
         <a class="ver" href="https://github.com/ahape/transliterillic/releases/tag/v{{ version }}">v{{ version }}</a>
-        <select id="lang" aria-label="Cyrillic flavor">
-          <option value="ru">Russian</option>
-          <option value="uk">Ukrainian</option>
-          <option value="sr">Serbian</option>
-          <option value="uz">Uzbek</option>
-          <option value="tg">Tajik</option>
+        <select id="lang" aria-label="Alphabet">
+          {% for plugin in plugins %}
+          <optgroup label="{{ plugin.label }}">
+            {% for code, (name, _) in plugin.flavors.items() %}
+            <option value="{{ code }}">{{ name }}</option>
+            {% endfor %}
+          </optgroup>
+          {% endfor %}
         </select>
       </header>
 
       <p id="date" class="date"></p>
-      <p class="tagline">Guess the English word behind the Cyrillic.</p>
+      <p id="tagline" class="tagline">{{ tagline }}</p>
 
       <main>
         <p id="cipher" class="cipher" lang="ru"></p>

@@ -12,6 +12,7 @@ const els = {
   rubric: document.getElementById("rubric"),
   rubricList: document.getElementById("rubric-list"),
   lang: document.getElementById("lang"),
+  tagline: document.getElementById("tagline"),
 };
 
 let mode = "daily";
@@ -21,7 +22,7 @@ let state = loadState();
 
 function defaultState() {
   return {
-    lang: "ru",
+    lang: els.lang.value || "ru",
     dailyDate: "",
     slot: 0,
     solved: [false, false, false],
@@ -107,7 +108,7 @@ function markWin(today) {
 }
 
 function renderRubric(rows) {
-  els.rubricList.innerHTML = rows.map((r) => `<li>${r.cyr} = ${r.lat}</li>`).join("");
+  els.rubricList.innerHTML = rows.map((r) => `<li>${r.glyph} = ${r.lat}</li>`).join("");
 }
 
 function setRubricOpen(open) {
@@ -135,7 +136,10 @@ function isPracticePrompt() {
 
 function render() {
   els.lang.value = state.lang;
-  els.cipher.lang = state.lang || "ru";
+  els.cipher.lang = state.lang || els.lang.value;
+
+  const src = mode === "practice" ? practice : daily;
+  if (src && src.tagline) els.tagline.textContent = src.tagline;
 
   if (daily) {
     els.date.textContent = formatUtcDate(daily.date);

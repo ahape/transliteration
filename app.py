@@ -5,7 +5,7 @@ from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request
 
-from transliterate import CASES, LANGS, rubric, transliterate
+from transliterate import ALL, CASES, DEFAULT_LANG, FLAVORS, rubric, transliterate
 
 ROOT = Path(__file__).parent
 EPOCH = date(2026, 1, 1)
@@ -25,9 +25,9 @@ app.json.ensure_ascii = False
 
 
 def _opts():
-    lang = request.args.get("lang", "ru")
+    lang = request.args.get("lang", DEFAULT_LANG)
     case = request.args.get("case", "upper")
-    if lang not in LANGS or case not in CASES:
+    if lang not in FLAVORS or case not in CASES:
         return None
     return lang, case
 
@@ -54,7 +54,12 @@ def _today():
 
 @app.get("/")
 def index():
-    return render_template("index.html", version=VERSION)
+    return render_template(
+        "index.html",
+        version=VERSION,
+        plugins=ALL,
+        tagline=ALL[0].tagline,
+    )
 
 
 @app.get("/api/daily")
@@ -69,6 +74,7 @@ def daily():
         "date": today.isoformat(),
         "index": index,
         "total": len(PUZZLES),
+        "tagline": FLAVORS[lang].tagline,
         "rubric": rubric(lang),
         "words": None,
     }
@@ -94,6 +100,7 @@ def practice():
         {
             "index": i,
             "total": n,
+            "tagline": FLAVORS[lang].tagline,
             "rubric": rubric(lang),
             "word": _pack(word, lang, case) if n else None,
         }

@@ -19,7 +19,7 @@ Original [wireframe](https://imgur.com/a/eSq1aQo)
 
 </details>
 
-A daily three-word puzzle: an English Scrabble word, shown in Cyrillic. New word every day.
+A daily three-word puzzle: an English Scrabble word, shown in Cyrillic or Greek. New word every day.
 
 ```bash
 python -m venv .venv
