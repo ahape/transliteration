@@ -8,7 +8,7 @@ def test_supermarket_russian():
 
 
 def test_length_preserved():
-    assert len(transliterate("kitchen", "uk")) == 7
+    assert len(transliterate("market", "uk")) == 6
     assert len(transliterate("window", "uz")) == 6
     assert len(transliterate("jump", "sr")) == 4
     assert len(transliterate("jump", "tg")) == 4
@@ -19,7 +19,26 @@ def test_serbian_and_tajik_letters():
     assert transliterate("jump", "sr") == "ЏУМП"
     assert transliterate("yes", "sr") == "ЈЕС"
     assert transliterate("jump", "tg") == "ҶУМП"
-    assert transliterate("qosh", "tg") == "ҚОСҲ"
+    assert transliterate("qosh", "tg") == "ҚОШ"
+
+
+def test_cyrillic_digraphs():
+    assert transliterate("shop", "ru") == "ШОП"
+    assert transliterate("fish", "ru") == "ФИШ"
+    assert transliterate("hush", "ru") == "ХУШ"
+    assert transliterate("sssh", "ru") == "ССШ"
+    assert transliterate("SHOP", "ru", "lower") == "шоп"
+    assert transliterate("chat", "ru") == "ЧАТ"
+    assert transliterate("church", "ru") == "ЧУРЧ"
+    assert transliterate("rich", "ru") == "РИЧ"
+    assert transliterate("match", "ru") == "МАТЧ"
+    assert transliterate("CHAT", "ru", "lower") == "чат"
+    assert transliterate("shop", "uk") == "ШОП"
+    assert transliterate("chat", "uk") == "ЧАТ"
+    assert transliterate("shop", "sr") == "ШОП"
+    assert transliterate("chat", "sr") == "ЧАТ"
+    assert transliterate("shop", "el") == "ΣΗΟΠ"
+    assert transliterate("chat", "el") == "ΞΗΑΤ"
 
 
 def test_greek_supermarket():
@@ -53,5 +72,8 @@ def test_flavors_differ():
 
 def test_rubric_order():
     rows = rubric("ru")
-    assert [row["lat"] for row in rows] == list(LATIN)
+    assert [row["lat"] for row in rows[:26]] == list(LATIN)
     assert rows[0] == {"glyph": "А", "lat": "A"}
+    assert [row["lat"] for row in rows[26:]] == ["CH", "SH"]
+    assert rows[-2:] == [{"glyph": "Ч", "lat": "CH"}, {"glyph": "Ш", "lat": "SH"}]
+    assert [row["lat"] for row in rubric("el")] == list(LATIN)

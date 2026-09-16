@@ -1,4 +1,4 @@
-"""Cyrillic 1:1 maps by language flavor."""
+"""Cyrillic 1:1 maps by language flavor, plus SH→sha and CH→che."""
 
 id = "cyrillic"
 label = "Cyrillic"
@@ -10,3 +10,4 @@ flavors = {
     "uz": ("Uzbek", "АБЦДЕФГҲИЖКЛМНОПҚРСТУВЎХЙЗ"),
     "tg": ("Tajik", "АБЦДЕФГҲИҶКЛМНОПҚРСТУВВХЙЗ"),
 }
+digraphs = {"CH": "Ч", "SH": "Ш"}
