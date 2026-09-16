@@ -1,6 +1,6 @@
 [project]
 name = "transliterillic"
-version = "0.1.18"
+version = "0.1.19"
 description = "Daily English puzzle in another alphabet"
 requires-python = ">=3.11"
 dependencies = ["flask>=3.0"]
