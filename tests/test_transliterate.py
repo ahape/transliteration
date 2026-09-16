@@ -1,10 +1,33 @@
 from plugins import ALL
-from transliterate import MAPS, LATIN, rubric, transliterate
+from transliterate import FLAVORS, MAPS, LATIN, rubric, transliterate
 
 
 def test_supermarket_russian():
     assert transliterate("supermarket", "ru", "upper") == "СУПЭРМАРКЭТ"
     assert transliterate("SUPERMARKET", "ru", "lower") == "супэрмаркэт"
+
+
+def test_hard_and_soft_c():
+    assert transliterate("cook", "ru") == "КООК"
+    assert transliterate("center", "ru") == "ЦЭНТЭР"
+    assert transliterate("centre", "ru")[0] == MAPS["ru"]["C"]
+    assert transliterate("civic", "ru") == "ЦИВИК"
+    assert transliterate("church", "ru")[0] == MAPS["ru"]["C"]
+    assert transliterate("cook", "el") == "ΚΟΟΚ"
+    for lang, table in MAPS.items():
+        if FLAVORS[lang].id != "cyrillic":
+            continue
+        assert transliterate("cook", lang)[0] == table["K"]
+        assert transliterate("center", lang)[0] == table["C"]
+
+
+def test_z_phonetics():
+    assert transliterate("zillion", "ru")[0] == MAPS["ru"]["Z"]
+    assert transliterate("pizza", "ru") == "ПИЦЦА"
+    assert "Ц" in transliterate("pretzel", "ru")
+    assert transliterate("pretzel", "ru").count("З") == 0
+    assert transliterate("buzz", "ru").endswith("ЗЗ")
+    assert transliterate("pizza", "el") == "ΠΙΖΖΑ"
 
 
 def test_length_preserved():
@@ -13,6 +36,9 @@ def test_length_preserved():
     assert len(transliterate("jump", "sr")) == 4
     assert len(transliterate("jump", "tg")) == 4
     assert len(transliterate("kitchen", "el")) == 7
+    for word in ("cook", "center", "civic", "church", "pizza", "zillion", "pretzel", "buzz"):
+        assert len(transliterate(word, "ru")) == len(word)
+        assert len(transliterate(word, "el")) == len(word)
 
 
 def test_serbian_and_tajik_letters():
