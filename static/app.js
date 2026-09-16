@@ -28,10 +28,7 @@ function defaultState() {
     slot: 0,
     solved: [false, false, false],
     completed: false,
-    lastWinDate: "",
-    currentStreak: 0,
-    maxStreak: 0,
-    daysWon: 0,
+    history: {},
     practiceIndex: 0,
   };
 }
@@ -39,7 +36,11 @@ function defaultState() {
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY) || "{}";
-    return { ...defaultState(), ...JSON.parse(raw) };
+    const next = { ...defaultState(), ...JSON.parse(raw) };
+    if (!next.history || typeof next.history !== "object" || Array.isArray(next.history)) {
+      next.history = {};
+    }
+    return next;
   } catch {
     return defaultState();
   }
@@ -72,10 +73,7 @@ function shiftDate(iso, days) {
 }
 
 function localIsoDate() {
-  const d = new Date();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${m}-${day}`;
+  return toIso(new Date());
 }
 
 function qs() {
@@ -90,23 +88,63 @@ async function getJson(url) {
 
 function rollDay(today) {
   if (state.dailyDate === today) return;
-  const yesterday = shiftDate(today, -1);
-  if (state.lastWinDate !== today && state.lastWinDate !== yesterday) {
-    state.currentStreak = 0;
-  }
   state.dailyDate = today;
   state.slot = 0;
   state.solved = [false, false, false];
   state.completed = false;
 }
 
-function markWin(today) {
-  if (state.lastWinDate === today) return;
-  const yesterday = shiftDate(today, -1);
-  state.currentStreak = state.lastWinDate === yesterday ? state.currentStreak + 1 : 1;
-  state.maxStreak = Math.max(state.maxStreak, state.currentStreak);
-  state.daysWon += 1;
-  state.lastWinDate = today;
+function recordDay(date) {
+  state.history[date] = state.solved.filter(Boolean).length;
+}
+
+function localDay(y, m, d) {
+  return new Date(y, m - 1, d);
+}
+
+function parseIso(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return localDay(y, m, d);
+}
+
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+function toIso(dt) {
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;");
+}
+
+function ytdWeeks() {
+  const today = parseIso(localIsoDate());
+  const start = localDay(today.getFullYear(), 1, 1);
+  const weeks = [];
+  let col = [];
+  for (let i = 0; i < start.getDay(); i += 1) col.push(null);
+  for (let dt = new Date(start); dt <= today; dt.setDate(dt.getDate() + 1)) {
+    col.push(new Date(dt));
+    if (col.length === 7) {
+      weeks.push(col);
+      col = [];
+    }
+  }
+  if (col.length) {
+    while (col.length < 7) col.push(null);
+    weeks.push(col);
+  }
+  return weeks;
+}
+
+function weekdayLabel(row) {
+  if (row % 2 === 0) return "";
+  return localDay(2026, 1, 4 + row).toLocaleDateString(undefined, { weekday: "short" });
 }
 
 function renderRubric(rows) {
@@ -126,7 +164,32 @@ function currentWord() {
 }
 
 function renderScore() {
-  els.score.innerHTML = `<dfn title="Consecutive days played">Streak</dfn>: ${state.currentStreak} &bull; <dfn title="Total perfect scores">Won</dfn>: ${state.daysWon}`;
+  const weeks = ytdWeeks();
+  const months = weeks
+    .map((week) => week.find((dt) => dt && dt.getDate() === 1))
+    .map((dt) => (dt ? dt.toLocaleDateString(undefined, { month: "short" }) : ""));
+  const wdays = [0, 1, 2, 3, 4, 5, 6]
+    .map((row) => `<span>${esc(weekdayLabel(row))}</span>`)
+    .join("");
+  const cells = weeks
+    .flat()
+    .map((dt) => {
+      if (!dt) return `<span class="graph-cell pad"></span>`;
+      const iso = toIso(dt);
+      const played = Object.hasOwn(state.history, iso);
+      const n = played ? state.history[iso] : 0;
+      const kind = !played ? "none" : n === 3 ? "ok" : "bad";
+      const tip = `${dt.toLocaleDateString()} · ${n}/3`;
+      return `<span class="graph-cell ${kind}" data-tip="${esc(tip)}"></span>`;
+    })
+    .join("");
+  els.score.innerHTML = `<div class="graph-scroll"><div class="graph" style="--weeks:${weeks.length}" role="img" aria-label="Year to date scores">
+    <div class="graph-months"><span></span>${months.map((m) => `<span>${esc(m)}</span>`).join("")}</div>
+    <div class="graph-body">
+      <div class="graph-wdays" aria-hidden="true">${wdays}</div>
+      <div class="graph-weeks">${cells}</div>
+    </div>
+  </div></div>`;
 }
 
 function renderRevealed() {
@@ -196,6 +259,9 @@ function render() {
 async function loadDaily() {
   daily = await getJson(`/api/daily?${qs()}&date=${localIsoDate()}`);
   rollDay(daily.date);
+  if (state.completed && !Object.hasOwn(state.history, daily.date)) {
+    recordDay(daily.date);
+  }
   if (daily.rubric) renderRubric(daily.rubric);
   saveState();
 }
@@ -234,7 +300,7 @@ function advanceDaily(correct) {
     state.slot += 1;
   } else {
     state.completed = true;
-    if (state.solved.every(Boolean)) markWin(daily.date);
+    recordDay(daily.date);
   }
   saveState();
   render();

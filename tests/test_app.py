@@ -17,6 +17,7 @@ def test_index():
     assert "case-upper" not in html
     assert "practice-nav" not in html
     assert "favicon.svg" in html
+    assert '<div id="score"' in html
     assert client.get("/favicon.ico").status_code == 200
 
 
