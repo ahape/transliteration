@@ -4,7 +4,8 @@ from app import EPOCH, PUZZLES, VERSION, app
 
 
 def test_index():
-    html = app.test_client().get("/").get_data(as_text=True)
+    client = app.test_client()
+    html = client.get("/").get_data(as_text=True)
     assert "Transliteration" in html
     assert "pico.min.css" in html
     assert f'href="https://github.com/ahape/transliteration/releases/tag/v{VERSION}"' in html
@@ -15,6 +16,8 @@ def test_index():
     assert 'id="revealed"' in html
     assert "case-upper" not in html
     assert "practice-nav" not in html
+    assert "favicon.svg" in html
+    assert client.get("/favicon.ico").status_code == 200
 
 
 def _assert_daily(data, day):

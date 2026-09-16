@@ -29,6 +29,8 @@ RUNTIME_FILES = (
     "data/practice.json",
     "static/app.js",
     "static/style.css",
+    "static/favicon.svg",
+    "static/favicon.ico",
     "templates/index.html",
 )
 

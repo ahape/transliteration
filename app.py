@@ -3,7 +3,7 @@ import tomllib
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
 
 from transliterate import ALL, CASES, DEFAULT_LANG, FLAVORS, rubric, transliterate
 
@@ -50,6 +50,11 @@ def _today():
             if lo <= wanted <= hi:
                 return wanted
     return now.date()
+
+
+@app.get("/favicon.ico")
+def favicon():
+    return send_from_directory(app.static_folder, "favicon.ico")
 
 
 @app.get("/")
