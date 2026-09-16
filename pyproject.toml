@@ -1,5 +1,5 @@
 [project]
-name = "transliterillic"
+name = "transliteration"
 version = "0.1.18"
 description = "Daily English puzzle in another alphabet"
 requires-python = ">=3.11"

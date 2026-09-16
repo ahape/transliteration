@@ -5,9 +5,9 @@ from app import EPOCH, PUZZLES, VERSION, app
 
 def test_index():
     html = app.test_client().get("/").get_data(as_text=True)
-    assert "Transliterillic" in html
+    assert "Transliteration" in html
     assert "pico.min.css" in html
-    assert f'href="https://github.com/ahape/transliterillic/releases/tag/v{VERSION}"' in html
+    assert f'href="https://github.com/ahape/transliteration/releases/tag/v{VERSION}"' in html
     assert f"v{VERSION}" in html
     assert "Guess the English word behind the Cyrillic." in html
     assert 'value="el"' in html

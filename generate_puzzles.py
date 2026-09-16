@@ -24,7 +24,7 @@ MAX_LEN = 10
 def load_words() -> list[str]:
     CACHE.parent.mkdir(exist_ok=True)
     if not CACHE.exists():
-        req = urllib.request.Request(URL, headers={"User-Agent": "transliterillic"})
+        req = urllib.request.Request(URL, headers={"User-Agent": "transliteration"})
         with urllib.request.urlopen(req, timeout=60) as resp:
             CACHE.write_bytes(resp.read())
     words = set()

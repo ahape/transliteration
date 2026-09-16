@@ -40,7 +40,7 @@ def version() -> str:
 
 def package(dist_dir: Path) -> Path:
     dist_dir.mkdir(exist_ok=True)
-    zpath = dist_dir / f"transliterillic-{version()}.zip"
+    zpath = dist_dir / f"transliteration-{version()}.zip"
     with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as zf:
         for rel in RUNTIME_FILES:
             zf.write(ROOT / rel, rel)
@@ -77,6 +77,7 @@ def deploy() -> None:
         else f"{username}.pythonanywhere.com"
     )
     domain = os.environ.get("PYTHONANYWHERE_DOMAIN") or default_domain
+    # Existing PA host paths; renaming them would break the live webapp.
     project = os.environ.get("PYTHONANYWHERE_PROJECT_DIR") or f"/home/{username}/transliterillic"
     venv = os.environ.get("PYTHONANYWHERE_VENV") or f"/home/{username}/.virtualenvs/transliterillic"
     python_version = os.environ.get("PYTHONANYWHERE_PYTHON") or "python313"

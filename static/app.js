@@ -1,4 +1,4 @@
-const STORAGE_KEY = "transliterillic";
+const STORAGE_KEY = "transliteration";
 
 const els = {
   date: document.getElementById("date"),
@@ -38,7 +38,8 @@ function defaultState() {
 
 function loadState() {
   try {
-    return { ...defaultState(), ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
+    const raw = localStorage.getItem(STORAGE_KEY) || "{}";
+    return { ...defaultState(), ...JSON.parse(raw) };
   } catch {
     return defaultState();
   }

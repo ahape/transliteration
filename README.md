@@ -1,4 +1,4 @@
-# Transliterillic
+# Transliteration
 
 ## Background
 
@@ -72,6 +72,8 @@ Web tab: add a **Manual configuration** app with **the same** Python version.
 
 * Virtualenv = `/home/<you>/.virtualenvs/transliterillic`
 * Source = `/home/<you>/transliterillic`.
+
+Those host paths are the live PythonAnywhere layout. Leave them as-is unless you recreate the webapp; `scripts/deploy.py` still defaults to them.
 
 When finished, reload the website.
 
