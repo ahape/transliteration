@@ -140,7 +140,7 @@ function renderRevealed() {
   els.revealed.hidden = rows.length === 0;
   els.revealed.innerHTML = rows
     .map((word, i) => {
-      const line = `${word.cipher} -> ${word.answer.toUpperCase()}`;
+      const line = `${word.cipher} &rarr; ${word.answer.toUpperCase()}`;
       return `<li>${state.solved[i] ? line : `${line} (wrong)`}</li>`;
     })
     .join("");
