@@ -21,29 +21,18 @@ Original [wireframe](https://imgur.com/a/eSq1aQo)
 
 A daily three-word puzzle: an English Scrabble word, shown in Cyrillic or Greek. New word every day.
 
+One-liner copy/pasta
 ```bash
-python -m venv .venv
+uv venv --clear && source .venv/bin/activate && uv pip install -r requirements.txt && flask --app app run --port 5005
+```
+
+Multiline copy/pasta
+```bash
+uv venv --clear
 source .venv/bin/activate
-pip install -r requirements.txt
-flask --app app run
+uv pip install -r requirements.txt
+flask --app app run --port 5005
 ```
-
-> [!NOTE]
-> if the default port (`5000`) is occupied, just append `--port 5001` to the end of the `flask` command above.
-
-Open http://127.0.0.1:5000
-
-<details>
-<summary>Regenerating the puzzle calendar</summary>
-
-ENABLE ∩ common English, seeded shuffle:
-
-```bash
-python generate_puzzles.py
-```
-
-</details>
-
 
 `pip install pytest` then `pytest` to run the test suite.
 

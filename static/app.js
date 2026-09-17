@@ -125,10 +125,11 @@ function esc(s) {
 function ytdWeeks() {
   const today = parseIso(localIsoDate());
   const start = localDay(today.getFullYear(), 1, 1);
+  const end = localDay(today.getFullYear(), 12, 31);
   const weeks = [];
   let col = [];
   for (let i = 0; i < start.getDay(); i += 1) col.push(null);
-  for (let dt = new Date(start); dt <= today; dt.setDate(dt.getDate() + 1)) {
+  for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
     col.push(new Date(dt));
     if (col.length === 7) {
       weeks.push(col);
@@ -144,7 +145,7 @@ function ytdWeeks() {
 
 function weekdayLabel(row) {
   if (row % 2 === 0) return "";
-  return localDay(2026, 1, 4 + row).toLocaleDateString(undefined, { weekday: "short" });
+  return localDay(2026, 1, 4 + row).toLocaleDateString(undefined, { weekday: "short" }).charAt(0);
 }
 
 function renderRubric(rows) {
@@ -171,6 +172,7 @@ function renderScore() {
   const wdays = [0, 1, 2, 3, 4, 5, 6]
     .map((row) => `<span>${esc(weekdayLabel(row))}</span>`)
     .join("");
+  const today = parseIso(localIsoDate());
   const cells = weeks
     .flat()
     .map((dt) => {
@@ -178,12 +180,13 @@ function renderScore() {
       const iso = toIso(dt);
       const played = Object.hasOwn(state.history, iso);
       const n = played ? state.history[iso] : 0;
-      const kind = !played ? "none" : n === 3 ? "ok" : "bad";
-      const tip = `${dt.toLocaleDateString()} · ${n}/3`;
+      const future = dt > today;
+      const kind = future ? "future" : !played ? "none" : n === 3 ? "ok" : "bad";
+      const tip = future ? dt.toLocaleDateString() : `${dt.toLocaleDateString()} · ${n}/3`;
       return `<span class="graph-cell ${kind}" data-tip="${esc(tip)}"></span>`;
     })
     .join("");
-  els.score.innerHTML = `<div class="graph-scroll"><div class="graph" style="--weeks:${weeks.length}" role="img" aria-label="Year to date scores">
+  els.score.innerHTML = `<div class="graph-scroll"><div class="graph" style="--weeks:${weeks.length}" role="img" aria-label="Year scores">
     <div class="graph-months"><span></span>${months.map((m) => `<span>${esc(m)}</span>`).join("")}</div>
     <div class="graph-body">
       <div class="graph-wdays" aria-hidden="true">${wdays}</div>

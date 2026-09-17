@@ -78,6 +78,10 @@ form button {
   text-align: center;
   margin: 0.75rem 0 0;
 }
+.revealed {
+  letter-spacing: 0.08em;
+  font-size: 16px;
+}
 
 .score {
   --graph-none: light-dark(#ebedf0, #21262d);
@@ -92,9 +96,9 @@ form button {
 }
 
 .graph {
-  --cell: 10px;
+  --cell: 9px;
   --gap: 3px;
-  --wdays: 1.75rem;
+  --wdays: 0.75rem;
   --weeks: 53;
   width: max-content;
   margin: 0 auto;
@@ -156,6 +160,11 @@ form button {
 
 .graph-cell.none {
   background: var(--graph-none);
+}
+
+.graph-cell.future {
+  background: transparent;
+  outline: 1px solid light-dark(rgba(27, 31, 35, 0.22), rgba(255, 255, 255, 0.22));
 }
 
 .graph-cell.ok {
