@@ -1,5 +1,6 @@
 :root {
   font-family: system-ui, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --wrong-answer-color: light-dark(#cf222e, #f85149);
 }
 
 body {
@@ -86,7 +87,6 @@ form button {
 .score {
   --graph-none: light-dark(#ebedf0, #21262d);
   --graph-ok: light-dark(#26a641, #3fb950);
-  --graph-bad: light-dark(#cf222e, #f85149);
   color: var(--pico-muted-color);
   text-align: left;
 }
@@ -172,7 +172,7 @@ form button {
 }
 
 .graph-cell.bad {
-  background: var(--graph-bad);
+  background: var(--wrong-answer-color);
 }
 
 .graph-cell[data-tip]:hover::after {
@@ -201,6 +201,9 @@ form button {
   margin: 0.2rem 0;
   list-style: none;
   color: var(--pico-muted-color);
+}
+.revealed li.wrong-answer {
+  color: var(--wrong-answer-color);
 }
 
 .rubric {
