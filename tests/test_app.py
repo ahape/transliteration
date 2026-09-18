@@ -41,6 +41,8 @@ def test_daily_ok():
     _assert_daily(data, today)
     assert data["rubric"][0]["lat"] == "A"
     assert data["rubric"][0]["glyph"]
+    assert {"glyph": "Ч", "lat": "CH"} in data["rubric"]
+    assert {"glyph": "Ш", "lat": "SH"} in data["rubric"]
     assert "Cyrillic" in data["tagline"]
 
 
