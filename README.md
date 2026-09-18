@@ -19,7 +19,7 @@ Original [wireframe](https://imgur.com/a/eSq1aQo)
 
 </details>
 
-A daily three-word puzzle: an English Scrabble word, shown in Cyrillic or Greek. New word every day.
+A daily three-word puzzle: English Scrabble words shown in Cyrillic or Greek. New words every day.
 
 One-liner copy/pasta
 ```bash
@@ -48,7 +48,7 @@ First, in "Consoles", enter a Bash console and see which python versions you hav
 ls /usr/bin/python3.*
 ```
 
-Python `>3.10` is only on the **innit** system image (Account → System image). Older images stop around 3.10.
+Python `>3.10` is only on the **innit** system image (Account -> System image). Older images stop around 3.10.
 
 Then, using whichever version supported:
 
@@ -68,15 +68,15 @@ When finished, reload the website.
 
 ### GitHub Actions
 
-CI runs tests on every push. A versioned zip is attached as a workflow artifact. Deploy happens on a `v*` tag or a manual **Run workflow**.
+CI runs tests on pushes to `master` and on pull requests. A versioned zip is attached as a workflow artifact. Deploy happens on a `v*` tag or a manual **Run workflow**.
 
-If the GitHub deploy job creates the webapp, set variable `PYTHONANYWHERE_PYTHON` to match (`python310`, `python311`, `python312`, …).
+If the GitHub deploy job creates the webapp, set variable `PYTHONANYWHERE_PYTHON` to match (`python310`, `python311`, `python312`, ...).
 
-GitHub repo **Settings → Secrets and variables → Actions** (repository secrets/variables):
+GitHub repo **Settings -> Secrets and variables -> Actions** (repository secrets/variables):
 
 | Secret / variable | Required | Example |
 |---|---|---|
-| `PYTHONANYWHERE_API_TOKEN` (secret) | yes | from Account → API token |
+| `PYTHONANYWHERE_API_TOKEN` (secret) | yes | from Account -> API token |
 | `PYTHONANYWHERE_USERNAME` (secret) | yes | your PA username |
 | `PYTHONANYWHERE_DOMAIN` (variable) | no | `you.pythonanywhere.com` |
 | `PYTHONANYWHERE_SITE` (variable) | no | `www.pythonanywhere.com` or `eu.pythonanywhere.com` |
@@ -91,5 +91,5 @@ git tag -a $VER -m "Release $VER"
 git push origin $VER
 ```
 
-Or **Actions → CI → Run workflow**. The API uploads the runtime files and reloads the webapp; it cannot `pip install` for you, so extra Python deps still need the console.
+Or **Actions -> CI -> Run workflow**. The API uploads the runtime files and reloads the webapp; it cannot `pip install` for you, so extra Python deps still need the console.
 

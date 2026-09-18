@@ -1,4 +1,4 @@
-"""Latin→script engine. Letters are 1:1; plugins may add digraphs."""
+"""Latin-to-script engine. Letters are 1:1; plugins may add digraphs."""
 
 from plugins import ALL
 

@@ -1,4 +1,4 @@
-"""Cyrillic 1:1 maps by language flavor, plus SH→sha and CH→che."""
+"""Cyrillic 1:1 maps by language flavor, plus SH->sha and CH->che."""
 
 id = "cyrillic"
 label = "Cyrillic"

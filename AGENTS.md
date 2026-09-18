@@ -13,6 +13,10 @@ Daily 3-word puzzle: English Scrabble words shown as Latin-to-script ciphers. Fl
     plugins/            alphabet plugins (maps, labels, tagline)
     generate_puzzles.py seeded calendar; do not rerun unless asked
     static/app.js       game and streak state
+    templates/          index.html, the only page
+    wsgi.py             WSGI entry for PythonAnywhere
+    scripts/deploy.py   versioned zip; PythonAnywhere upload and reload
+    tests/              pytest suite
     data/*.json         pregenerated words
 
 A plugin is `id`, `label`, `tagline`, and `flavors` `{code: (name, 26-glyphs)}`.

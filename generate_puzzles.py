@@ -1,7 +1,7 @@
 """Build data/puzzles.json and data/practice.json from dolph/dictionary popular.txt.
 
 popular.txt is ENABLE (Scrabble, no proper nouns) intersected with common TV/movie English.
-Dailies take the first 800×3 shuffled words. Practice is everything left so it
+Dailies take the first 800x3 shuffled words. Practice is everything left so it
 cannot spoil a scheduled daily.
 """
 
