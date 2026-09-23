@@ -20,6 +20,7 @@ let mode = "daily";
 let daily = null;
 let practice = null;
 let state = loadState();
+const guessExamples = ["onomatopoeia", "liaison", "mnemonic", "broccoli", "accommodate", "connoisseur", "renaissance", "entrepreneur"];
 
 function defaultState() {
   return {
@@ -239,6 +240,7 @@ function render() {
 
   els.primary.textContent = promptPractice ? "Practice" : "Submit";
   els.guess.disabled = promptPractice || !word;
+  els.guess.placeholder = guessExamples[Math.floor(Math.random() * guessExamples.length)] + "...?";
 
   if (inPractice && practice) {
     els.progress.textContent = `Practice ${practice.index + 1} / ${practice.total}`;
