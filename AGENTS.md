@@ -9,7 +9,7 @@ Prefer the smallest change that works. Do not add an abstraction, framework, or 
 Daily 3-word puzzle: English Scrabble words shown as Latin-to-script ciphers. Flask serves HTML and two JSON endpoints. The browser is vanilla JS + Pico CSS + localStorage. No frontend build.
 
     app.py              Flask; /api/daily and /api/practice
-    transliterate.py    Latin-to-script engine; 1:1 plus plugin digraphs
+    transliterate.py    Latin-to-script engine; one mapping per Latin letter, plus digraphs
     plugins/            alphabet plugins (maps, labels, tagline)
     generate_puzzles.py seeded calendar; do not rerun unless asked
     static/app.js       game and streak state
@@ -19,8 +19,9 @@ Daily 3-word puzzle: English Scrabble words shown as Latin-to-script ciphers. Fl
     tests/              pytest suite
     data/*.json         pregenerated words
 
-A plugin is `id`, `label`, `tagline`, and `flavors` `{code: (name, 26-glyphs)}`.
-Optional `digraphs` `{latin: glyph}` (Cyrillic CH→Ч, SH→Ш). Flavor codes are global.
+A plugin is `id`, `label`, `tagline`, and `flavors` `{code: (name, 26 mappings)}`.
+A mapping may be more than one character. Optional `digraphs` `{latin: mapping}`
+(Cyrillic CH, SH; Greek TH, CH, PH, PS). Flavor codes are global.
 Register it in `plugins.ALL` and `scripts/deploy.RUNTIME_FILES`.
 
 Browser-local date from EPOCH 2026-01-01 indexes puzzles.json. Practice words must not overlap scheduled dailies. Version is the `version` field in pyproject.toml.

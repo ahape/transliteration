@@ -10,7 +10,10 @@ from __future__ import annotations
 import json
 import random
 import urllib.request
+from collections import defaultdict
 from pathlib import Path
+
+from transliterate import transliterate
 
 ROOT = Path(__file__).parent
 CACHE = ROOT / ".cache" / "popular.txt"
@@ -35,8 +38,17 @@ def load_words() -> list[str]:
     return sorted(words)
 
 
+def without_shared_greek(words: list[str]) -> list[str]:
+    """Drop every word that shares a Greek cipher with another eligible word."""
+    groups = defaultdict(list)
+    for word in words:
+        groups[transliterate(word, "el")].append(word)
+    shared = {word for group in groups.values() if len(group) > 1 for word in group}
+    return [word for word in words if word not in shared]
+
+
 def main() -> None:
-    words = load_words()
+    words = without_shared_greek(load_words())
     need = DAYS * 3
     if len(words) < need:
         raise SystemExit(f"only {len(words)} eligible words, need {need}")

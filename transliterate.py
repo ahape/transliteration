@@ -1,4 +1,4 @@
-"""Latin-to-script engine. Letters are 1:1; plugins may add digraphs."""
+"""Latin-to-script engine. One mapping per Latin letter, plus digraphs."""
 
 from plugins import ALL
 
@@ -12,7 +12,7 @@ for plugin in ALL:
     extra = getattr(plugin, "digraphs", {})
     for code, (_, glyphs) in plugin.flavors.items():
         if len(glyphs) != len(LATIN):
-            raise ValueError(f"{plugin.id}:{code} has {len(glyphs)} glyphs, need {len(LATIN)}")
+            raise ValueError(f"{plugin.id}:{code} has {len(glyphs)} mappings, need {len(LATIN)}")
         FLAVORS[code] = plugin
         MAPS[code] = dict(zip(LATIN, glyphs))
         DIGRAPHS[code] = extra

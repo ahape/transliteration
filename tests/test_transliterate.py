@@ -33,7 +33,6 @@ def test_length_without_digraphs():
     assert len(transliterate("window", "uz")) == 6
     assert len(transliterate("jump", "sr")) == 4
     assert len(transliterate("jump", "tg")) == 4
-    assert len(transliterate("kitchen", "el")) == 7
 
 
 def test_serbian_and_tajik_letters():
@@ -59,20 +58,36 @@ def test_cyrillic_digraphs():
     assert transliterate("chat", "uk") == "ЧАТ"
     assert transliterate("shop", "sr") == "ШОП"
     assert transliterate("chat", "sr") == "ЧАТ"
-    assert transliterate("shop", "el") == "ΣΗΟΠ"
-    assert transliterate("chat", "el") == "ΞΗΑΤ"
+    assert transliterate("shop", "el") == "ΣΧΟΠ"
+    assert transliterate("chat", "el") == "ΤΣΑΤ"
 
 
-def test_greek_supermarket():
-    assert transliterate("supermarket", "el") == "ΣΥΠΕΡΜΑΡΚΕΤ"
-    assert transliterate("jump", "el") == "ΙΥΜΠ"
+def test_greek_phonetics():
+    assert transliterate("supermarket", "el") == "ΣΟΥΠΕΡΜΑΡΚΕΤ"
+    assert transliterate("jump", "el") == "ΤΖΟΥΜΠ"
+    assert transliterate("this", "el") == "ΘΙΣ"
+    assert transliterate("photo", "el") == "ΦΟΤΟ"
+    assert transliterate("box", "el") == "ΜΠΟΞ"
+    assert transliterate("dog", "el") == "ΝΤΟΓ"
+    assert transliterate("center", "el") == "ΣΕΝΤΕΡ"
+    assert transliterate("cat", "el") == "ΚΑΤ"
+    assert transliterate("code", "el") == "ΚΟΝΤΕ"
+    assert transliterate("cold", "el") == "ΚΟΛΝΤ"
+    assert transliterate("vase", "el") == "ΒΑΣΕ"
+    assert transliterate("base", "el") == "ΜΠΑΣΕ"
+    assert transliterate("church", "el") == "ΤΣΟΥΡΤΣ"
+    assert MAPS["el"]["B"] == "ΜΠ"
+    assert MAPS["el"]["D"] == "ΝΤ"
+    assert MAPS["el"]["J"] == "ΤΖ"
+    assert MAPS["el"]["U"] == "ΟΥ"
+    assert transliterate("bump", "el") == "ΜΠΟΥΜΠ"
 
 
 def test_maps_cover_a_to_z():
     for lang, table in MAPS.items():
         assert set(table) == set(LATIN), lang
         for glyph in table.values():
-            assert len(glyph) == 1, (lang, glyph)
+            assert glyph, (lang, glyph)
 
 
 def test_plugins():
@@ -98,4 +113,11 @@ def test_rubric_order():
     assert rows[0] == {"glyph": "А", "lat": "A"}
     assert [row["lat"] for row in rows[26:]] == ["CH", "SH"]
     assert rows[-2:] == [{"glyph": "Ч", "lat": "CH"}, {"glyph": "Ш", "lat": "SH"}]
-    assert [row["lat"] for row in rubric("el")] == list(LATIN)
+    el = rubric("el")
+    assert [row["lat"] for row in el[:26]] == list(LATIN)
+    assert el[26:] == [
+        {"glyph": "Θ", "lat": "TH"},
+        {"glyph": "ΤΣ", "lat": "CH"},
+        {"glyph": "Φ", "lat": "PH"},
+        {"glyph": "Ψ", "lat": "PS"},
+    ]

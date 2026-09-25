@@ -1,7 +1,10 @@
 import json
 import re
+from collections import Counter
 from datetime import date
 from pathlib import Path
+
+from transliterate import transliterate
 
 ROOT = Path(__file__).resolve().parents[1]
 WORD = re.compile(r"^[a-z]{4,10}$")
@@ -18,6 +21,14 @@ def test_calendar_shape():
     assert len(daily) == len(set(daily))
     assert len(practice) > 10000
     assert set(daily).isdisjoint(practice)
+
+
+def test_greek_ciphers_are_unique():
+    puzzles = json.loads((ROOT / "data" / "puzzles.json").read_text(encoding="utf-8"))
+    practice = json.loads((ROOT / "data" / "practice.json").read_text(encoding="utf-8"))
+    words = [word for day in puzzles for word in day] + practice
+    counts = Counter(transliterate(word, "el") for word in words)
+    assert [cipher for cipher, n in counts.items() if n > 1] == []
 
 
 def test_epoch_index():
