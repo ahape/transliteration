@@ -12,6 +12,9 @@ body.rubric-open {
 }
 
 .frame {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   max-width: 36rem;
   margin: 0 auto;
   padding: 1rem 1rem 4rem;
@@ -23,6 +26,10 @@ body.rubric-open {
   justify-content: space-between;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.bottom {
+  margin: auto 0 -35px !important;
 }
 
 .ver,
